@@ -1,0 +1,68 @@
+name: Sync packages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: package-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Download and verify the latest stable release
+        id: release
+        shell: bash
+        run: |
+          count=$(gh release list --repo loomx-ai/steward --exclude-drafts --exclude-pre-releases --limit 1 --json tagName --jq length)
+          if [[ "$count" == 0 ]]; then
+            echo 'No stable release is published yet.'
+            exit 0
+          fi
+          tag=$(gh release view --repo loomx-ai/steward --json tagName --jq .tagName)
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          if [[ -f bucket/steward.json ]] && [[ "$(jq -r .version bucket/steward.json)" == "${tag#v}" ]]; then
+            echo "Already synchronized with $tag."
+            exit 0
+          fi
+          gh release download "$tag" --repo loomx-ai/steward --dir incoming \
+            --pattern steward.rb --pattern steward.json --pattern checksums.txt
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          incoming = Path('incoming')
+          checksums = dict(line.split()[::-1] for line in (incoming / 'checksums.txt').read_text().splitlines())
+          for name in ('steward.rb', 'steward.json'):
+              actual = hashlib.sha256((incoming / name).read_bytes()).hexdigest()
+              if actual != checksums.get(name):
+                  raise SystemExit(f'Checksum verification failed: {name}')
+          json.loads((incoming / 'steward.json').read_text())
+          PY
+          ruby -c incoming/steward.rb
+          [[ "$(jq -r .version incoming/steward.json)" == "${tag#v}" ]]
+          mkdir -p Formula bucket
+          cp incoming/steward.rb Formula/steward.rb
+          cp incoming/steward.json bucket/steward.json
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Publish package manifests
+        if: steps.release.outputs.tag != ''
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Formula/steward.rb bucket/steward.json
+          if ! git diff --cached --quiet; then
+            git commit -m "steward $TAG"
+            git push
+          fi
