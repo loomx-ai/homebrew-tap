@@ -66,3 +66,14 @@ jobs:
             git commit -m "steward $TAG"
             git push
           fi
+      - name: Record monthly package check
+        run: |
+          # Record successful checks even between releases so scheduled sync stays active.
+          date -u +%Y-%m > last-checked.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add last-checked.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record monthly package check'
+            git push
+          fi
