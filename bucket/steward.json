@@ -1,0 +1,23 @@
+{
+  "version": "0.1.0",
+  "description": "Discover, understand, and safely clean up cloud resources",
+  "homepage": "https://loomx.ai/steward",
+  "license": "Apache-2.0",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/loomx-ai/steward/releases/download/v0.1.0/steward_0.1.0_windows_amd64.zip",
+      "hash": "f723f419836d3137ac03a71815eca9478a6e8145527568e65c232ee4fd56ae89"
+    }
+  },
+  "bin": "steward.exe",
+  "checkver": {
+    "github": "https://github.com/loomx-ai/steward"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/loomx-ai/steward/releases/download/v$version/steward_$version_windows_amd64.zip"
+      }
+    }
+  }
+}
