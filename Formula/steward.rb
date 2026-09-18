@@ -1,28 +1,28 @@
 class Steward < Formula
   desc "Discover, understand, and safely clean up cloud resources"
   homepage "https://loomx.ai/steward"
-  version "0.1.0"
+  version "0.2.0"
   license "Apache-2.0"
   on_macos do
     depends_on macos: :sonoma
     on_arm do
-      url "https://github.com/loomx-ai/steward/releases/download/v0.1.0/steward_0.1.0_darwin_arm64.tar.gz"
-      sha256 "932872e51c5a69022dc6476ac642536980dd48e9e43a224820364c22292c52e1"
+      url "https://github.com/loomx-ai/steward/releases/download/v0.2.0/steward_0.2.0_darwin_arm64.tar.gz"
+      sha256 "11407f3d6d4791095cf996bcf02a4ec117dfadff3cd78ec9952ec3821746ccd0"
     end
     on_intel do
-      url "https://github.com/loomx-ai/steward/releases/download/v0.1.0/steward_0.1.0_darwin_amd64.tar.gz"
-      sha256 "50d9ffc678448abe0db0b1859018cb53e7146df73860309896cbe16b2ea645f4"
+      url "https://github.com/loomx-ai/steward/releases/download/v0.2.0/steward_0.2.0_darwin_amd64.tar.gz"
+      sha256 "d8e6986d8fa33725832401abe3d0dfec7ed18ab5afe9061e09fad3cba4199254"
     end
   end
   on_linux do
     depends_on "ca-certificates"
     on_arm do
-      url "https://github.com/loomx-ai/steward/releases/download/v0.1.0/steward_0.1.0_linux_arm64.tar.gz"
-      sha256 "33ba319bb58b18ffae5e053104fef04badb8abb72e98341bfc8ec85aff49d65e"
+      url "https://github.com/loomx-ai/steward/releases/download/v0.2.0/steward_0.2.0_linux_arm64.tar.gz"
+      sha256 "1129e29f5e4bbe181d0c13f05533d9dde75a175f799b87058e76b24b8e794e04"
     end
     on_intel do
-      url "https://github.com/loomx-ai/steward/releases/download/v0.1.0/steward_0.1.0_linux_amd64.tar.gz"
-      sha256 "c50d13b6343f53267bd068804e4c205511d83384c51d492afd51dbd63cbc4249"
+      url "https://github.com/loomx-ai/steward/releases/download/v0.2.0/steward_0.2.0_linux_amd64.tar.gz"
+      sha256 "00c6ebc05f06a98811fc19eefda0e8da53794c26766042e936330f8246bfb4bc"
     end
   end
   def install
